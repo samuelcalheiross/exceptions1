@@ -39,22 +39,21 @@ public class HotelExceptions {
 
                 System.out.print("Check-out date: (dd/MM/yyyy)");
                 String checkout = sc.nextLine();
-
+                
                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
 
                 LocalDate checkinDate = LocalDate.parse(checkin, fmt);
                 LocalDate checkoutDate = LocalDate.parse(checkout, fmt);
 
-                if (checkinDate.isAfter(checkoutDate)) {
+                if (checkinDate.isAfter(checkoutDate) || checkoutDate.isAfter(LocalDate.now())) {
                     throw new IllegalArgumentException("Error in Reservation: Check-out date must be after check-in date.");
                 }
+                
+                Reservation r = new Reservation(roomNumber, checkinDate, checkoutDate);
+                reservations.add(r);
 
-                reservations.add(new Reservation(roomNumber, checkinDate, checkoutDate));
-
-                System.out.println("Reservation: Room: " + reservations.get(counter).getRoomNumber() + ", check-in: "
-                        + reservations.get(counter).getCheckin().format(fmt) + ", check-out: " + reservations.get(counter).getCheckout().format(fmt)
-                        + " " + reservations.get(counter).duration(checkinDate, checkoutDate) + " nights.");
-                System.out.println();
+                System.out.println(r.toString());
 
                 System.out.println("Enter data to update the reservation: ");
 
@@ -63,26 +62,23 @@ public class HotelExceptions {
 
                 System.out.print("Check-out date: (dd/MM/yyyy)");
                 String checkout2 = sc.nextLine();
-
+                
                 DateTimeFormatter fmt2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
                 LocalDate checkinDate2 = LocalDate.parse(checkin2, fmt2);
                 LocalDate checkoutDate2 = LocalDate.parse(checkout2, fmt2);
                 
-                if (checkinDate2.isAfter(checkoutDate2)) {
+
+                if (checkinDate2.isAfter(checkoutDate2) || checkoutDate2.isAfter(LocalDate.now())) {
                     throw new IllegalArgumentException("Error in Reservation: Check-out date must be after check-in date.");
                 }
-
-                reservations.remove(counter);
-
-                reservations.add(new Reservation(roomNumber, checkinDate2, checkoutDate2));
-
-                System.out.println("Reservation: Room: " + reservations.get(counter).getRoomNumber() + ", check-in: "
-                        + reservations.get(counter).getCheckin().format(fmt2) + ", check-out: " + reservations.get(counter).getCheckout().format(fmt2)
-                        + " " + reservations.get(counter).duration(checkinDate2, checkoutDate2) + " nights.");
-                System.out.println();
                 
-
+                r.updateReservation(checkinDate2, checkoutDate2);
+                
+                reservations.add(r);
+                
+                System.out.println(r.toString());
+                
                 counter++;
 
             } catch (IllegalArgumentException e) {
