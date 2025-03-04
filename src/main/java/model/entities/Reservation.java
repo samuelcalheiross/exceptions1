@@ -2,11 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package model;
+package model.entities;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import model.exceptions.DomainException;
 
 /**
  *
@@ -23,7 +24,11 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(Integer roomNumber, LocalDate checkin, LocalDate checkout) {
+    public Reservation(Integer roomNumber, LocalDate checkin, LocalDate checkout) throws DomainException {
+        if (!checkout.isAfter(checkin)) {
+            throw new DomainException("Error in Reservation: check-out date must be after check-in date");
+        }
+        
         this.roomNumber = roomNumber;
         this.checkin = checkin;
         this.checkout = checkout;
@@ -65,14 +70,16 @@ public class Reservation {
         this.checkout = checkout;
     }
 
-    public void validateReservationDates(String checkin, String checkout) {
+    public void validateReservationDates(String checkin, String checkout) throws DomainException {
         LocalDate checkinDate = LocalDate.parse(checkin, f);
         LocalDate checkoutDate = LocalDate.parse(checkout, f);
         
-        if (checkinDate.isAfter(checkoutDate) || checkoutDate.isBefore(LocalDate.now()) || checkinDate.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Error in Reservation: Check-in date must be today or later, "
-                    + "and check-out must be after check-in.");
-            
+        if (checkoutDate.isBefore(LocalDate.now()) || checkinDate.isBefore(LocalDate.now())) {
+            throw new DomainException("Error in Reservation: reservation dates for updates must be future dates");
+        }
+        
+        if (!checkoutDate.isAfter(checkinDate)) {
+            throw new DomainException("Error in Reservation: check-out date must be after check-in date");
         }
     }
 

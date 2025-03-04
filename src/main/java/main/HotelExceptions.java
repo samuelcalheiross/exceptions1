@@ -8,7 +8,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
-import model.Reservation;
+import model.entities.Reservation;
+import model.exceptions.DomainException;
 
 /**
  *
@@ -71,8 +72,11 @@ public class HotelExceptions {
 
                 counter++;
 
-            } catch (IllegalArgumentException e) {
+            } catch (DomainException e) {
                 System.out.println(e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Unexpected error!");
+                break;
             }
 
         }
